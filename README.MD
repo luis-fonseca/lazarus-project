@@ -11,19 +11,20 @@
 
 ### 📝 Sobre o Projeto
 
-O **Projeto Lazarus** é uma ferramenta de automação leve via Batch Script projetada para sobreviventes de **Project Zomboid**. Ele resolve o problema de perda de progresso devido a mortes acidentais, corrupção de arquivos ou erros de mods, permitindo que você gerencie e versione seus mundos de forma organizada e segura através de um menu interativo.
+O **Projeto Lazarus** é uma ferramenta de automação leve via Batch Script projetada para sobreviventes de **Project Zomboid**. Ele permite gerenciar, versionar e restaurar seus mundos de forma organizada e segura através de um menu interativo, protegendo suas centenas de horas de jogo contra mortes injustas ou arquivos corrompidos.
 
-**Destaques:**
+### ✨ Novas Funcionalidades
 
-- **Seletor Dinâmico:** Identifica automaticamente seus mundos (Sandbox, Multiplayer, etc.) para backup via índice numérico, evitando erros de digitação.
-- **Versionamento por Data/Hora:** Cada backup é salvo em uma pasta única com carimbo de tempo, permitindo múltiplos pontos de restauração.
-- **Acesso Rápido:** Atalhos integrados para abrir as pastas de save do jogo e a pasta de backups diretamente no Windows Explorer.
+- **Restauração Inteligente:** Escolha um ponto de restauração específico por data e hora para voltar no tempo em qualquer categoria (Sandbox, MP, etc).
+- **Suporte Bilíngue Automático:** O script detecta o idioma do seu Windows e ajusta toda a interface para Português ou Inglês automaticamente.
+- **Validação de Diretórios:** O sistema verifica a existência das pastas antes de tentar abri-las, evitando erros de sistema e garantindo uma experiência estável.
+- **Proteção de Sobrescrita:** Confirmações de segurança antes de qualquer restauração para evitar a perda acidental do progresso atual.
 
-### 🚀 Tecnologias
+### 🚀 Destaques Técnicos
 
-- **Windows Batch (CMD):** Scripting nativo, sem necessidade de instalar softwares externos ou interpretadores.
-- **XCOPY:** Utilizado para transferência de dados eficiente e preservação integral da estrutura de pastas.
-- **Variáveis de Ambiente Windows:** Configurado para funcionar em qualquer computador, independente do nome do usuário.
+- **Seletor Dinâmico:** Identifica automaticamente seus mundos para backup/restauro via índice numérico.
+- **Versionamento Infinito:** Cada backup é salvo em uma pasta única com carimbo de tempo (YYYY-MM-DD_HH-mm).
+- **Script Nativo:** Utiliza apenas recursos do Windows (Batch/CMD), sem necessidade de instalações externas.
 
 ---
 
@@ -31,20 +32,21 @@ O **Projeto Lazarus** é uma ferramenta de automação leve via Batch Script pro
 
 ### 📝 About the Project
 
-**Lazarus Project** is a lightweight Batch Script automation tool designed for **Project Zomboid** survivors. It solves the issue of losing progress due to accidental deaths, file corruption, or mod errors, allowing you to manage and version your worlds in an organized and secure way through an interactive menu.
+**Lazarus Project** is a lightweight Batch Script automation tool designed for **Project Zomboid** survivors. It allows you to manage, version, and restore your worlds in an organized and secure way through an interactive menu, protecting your hundreds of gameplay hours from unfair deaths or corrupted files.
 
-**Highlights:**
+### ✨ New Features
 
-- **Dynamic Selector:** Automatically identifies your worlds (Sandbox, Multiplayer, etc.) for backup via numeric index, preventing typos.
-- **Timestamped Versioning:** Every backup is saved in a unique folder, ensuring you can have multiple restoration points.
-- **Quick Access:** Integrated shortcuts to open both game save and backup folders directly in Windows Explorer.
+- **Smart Restore:** Choose a specific restoration point by date and time to go back in time in any category (Sandbox, MP, etc.).
+- **Automatic Bilingual Support:** The script detects your Windows language and automatically adjusts the entire interface to Portuguese or English.
+- **Directory Validation:** The system checks if folders exist before trying to open them, preventing system errors and ensuring a stable experience.
+- **Overwrite Protection:** Security confirmations before any restoration to prevent accidental loss of current progress.
 
-### 🚀 Technologies
+### 🚀 Technical Highlights
 
-- **Windows Batch (CMD):** Native scripting, no external software or interpreters required.
-- **XCOPY:** Used for efficient data transfer and full preservation of folder structures.
-- **Windows Environment Variables:** Designed to work on any PC, regardless of the system username.
+- **Dynamic Selector:** Automatically identifies your worlds for backup/restore via numeric index.
+- **Infinite Versioning:** Every backup is saved in a unique folder with a timestamp (YYYY-MM-DD_HH-mm).
+- **Native Script:** Uses only Windows resources (Batch/CMD), no external installations required.
 
 ---
 
-<p align="center">Feito com ❤️ por [Seu Nome ou Nick]</p>
+<p align="center">Feito com ❤️ por Luís Fonseca (Caffeine)</p>
