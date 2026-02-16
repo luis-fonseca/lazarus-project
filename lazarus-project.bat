@@ -1,174 +1,170 @@
 @echo off
-:: Desativa a exibição dos comandos no terminal, mostrando apenas os resultados.
-
 setlocal enabledelayedexpansion
-:: Permite que variáveis dentro de laços (como o FOR) sejam atualizadas em tempo real usando ! !.
-
 color 02
+title PROJECT LAZARUS - Gerenciador de Saves
 
-title PROJECT LAZARUS - v0.1
-:: Define o título da janela do Prompt de Comando.
-
-:: ======================================================
-:: DEFINIÇÃO DE CAMINHOS
-:: ======================================================
+:: Caminhos Base
 set "zomboid_raiz=%USERPROFILE%\Zomboid"
-:: Pasta principal do Zomboid no perfil do usuário.
-
 set "saves_raiz=%USERPROFILE%\Zomboid\Saves"
-:: Pasta onde o jogo separa os saves por categorias.
-
 set "destino_raiz=%USERPROFILE%\Documents\BackupsZomboid"
-:: Pasta nos "Meus Documentos" onde guardaremos as cópias.
 
 :menu_principal
 cls
-:: Limpa a tela para manter o visual organizado.
-
 echo ======================================================
-echo           GERENCIADOR DE BACKUPS ZOMBOID
+echo           PROJECT LAZARUS - MENU PRINCIPAL
 echo ======================================================
 echo.
-echo [1] Fazer Backup (Sandbox, Multiplayer, etc.)
-echo [2] Abrir pasta de Saves do Jogo (Explorer)
-echo [3] Abrir pasta de Backups (Explorer)
-echo [4] Sair
+echo [1] Fazer Backup (Salvar Progresso)
+echo [2] Restaurar Backup (Sobrescrever Save Atual)
+echo [3] Abrir pasta de Saves do Jogo (Explorer)
+echo [4] Abrir pasta de Backups (Explorer)
+echo [5] Sair
 echo.
-
 set "op_main="
-:: Limpa a variável da opção antes de ler o teclado.
-
 set /p "op_main=Escolha uma opcao: "
-:: 'set /p' faz o script parar e esperar que o usuário digite algo.
 
-:: Redirecionamento baseado na escolha:
-if "%op_main%"=="1" goto menu_categorias
-if "%op_main%"=="2" goto abrir_saves
-if "%op_main%"=="3" goto abrir_backup
-if "%op_main%"=="4" exit
+if "%op_main%"=="1" goto menu_categorias_backup
+if "%op_main%"=="2" goto menu_categorias_restore
+if "%op_main%"=="3" goto abrir_pasta_jogo
+if "%op_main%"=="4" goto abrir_pasta_backup
+if "%op_main%"=="5" exit
 goto menu_principal
-:: Se nada válido for digitado, volta para o menu.
 
-:abrir_saves
+:abrir_pasta_jogo
 start "" "%zomboid_raiz%"
-:: 'start' abre uma pasta ou programa. O "" vazio é necessário para nomes com espaços.
 goto menu_principal
 
-:abrir_backup
+:abrir_pasta_backup
 if not exist "%destino_raiz%" mkdir "%destino_raiz%"
-:: Verifica se a pasta de backup existe; se não, cria.
 start "" "%destino_raiz%"
 goto menu_principal
 
-:menu_categorias
+:: --- SEÇÃO DE CATEGORIAS (COMUM) ---
+:menu_categorias_backup
+set "modo_fluxo=BACKUP"
+goto menu_categorias_comum
+
+:menu_categorias_restore
+set "modo_fluxo=RESTORE"
+goto menu_categorias_comum
+
+:menu_categorias_comum
 cls
 echo ======================================================
-echo          SELECIONE A CATEGORIA DO SAVE
+echo          MODO: %modo_fluxo% - CATEGORIA
 echo ======================================================
 echo.
-echo [1] Sandbox (Mundos Personalizados)
-echo [2] Multiplayer (Servidores)
-echo [3] Survivor (Modo Sobrevivente)
-echo [4] Apocalypse (Modo Apocalipse)
+echo [1] Sandbox
+echo [2] Multiplayer
+echo [3] Survivor
+echo [4] Apocalypse
 echo [V] Voltar
 echo.
-
 set "cat="
 set /p "cat=Escolha a categoria: "
 
 if /i "%cat%"=="V" goto menu_principal
-:: '/i' faz a comparação ignorar se é 'v' ou 'V'.
+set "sub="
+if "%cat%"=="1" set "sub=Sandbox"
+if "%cat%"=="2" set "sub=Multiplayer"
+if "%cat%"=="3" set "sub=Survivor"
+if "%cat%"=="4" set "sub=Apocalypse"
 
-:: Define qual subpasta procurar dentro de \Saves\
-set "subpasta="
-if "%cat%"=="1" set "subpasta=Sandbox"
-if "%cat%"=="2" set "subpasta=Multiplayer"
-if "%cat%"=="3" set "subpasta=Survivor"
-if "%cat%"=="4" set "subpasta=Apocalypse"
+if "%sub%"=="" goto menu_categorias_comum
 
-if "%subpasta%"=="" (
-    echo Opcao invalida.
-    timeout /t 2 >nul
-    goto menu_categorias
+if "%modo_fluxo%"=="BACKUP" (
+    set "caminho_leitura=%saves_raiz%\%sub%"
+) else (
+    set "caminho_leitura=%destino_raiz%\%sub%"
 )
 
-set "caminho_busca=%saves_raiz%\%subpasta%"
-
-:: Verifica se a categoria escolhida realmente tem saves criados
-if not exist "%caminho_busca%" (
-    echo.
-    echo [AVISO] Nao existem saves na categoria %subpasta%.
-    pause
-    goto menu_categorias
-)
-
-:selecao_mundo
+:listar_mundos
 cls
 echo ======================================================
-echo           LISTANDO MUNDOS EM: %subpasta%
+echo    MODO: %modo_fluxo% - SELECIONE O MUNDO (%sub%)
 echo ======================================================
 echo.
+if not exist "%caminho_leitura%" (
+    echo [AVISO] Nao existem dados nesta categoria.
+    pause
+    goto menu_categorias_comum
+)
 
-:: Limpa a memória das variáveis de mundo anteriores
-for /L %%i in (1,1,100) do set "mundo[%%i]="
-
+for /L %%i in (1,1,100) do set "item[%%i]="
 set count=0
-:: O comando 'for' abaixo lista apenas pastas (/ad) dentro do caminho de busca.
-for /f "delims=" %%a in ('dir /b /ad "%caminho_busca%" 2^>nul') do (
+for /f "delims=" %%a in ('dir /b /ad "%caminho_leitura%" 2^>nul') do (
     set /a count+=1
-    set "mundo[!count!]=%%a"
+    set "item[!count!]=%%a"
     echo [!count!] - %%a
+)
+
+if %count%==0 (
+    echo [AVISO] Pasta vazia.
+    pause
+    goto menu_categorias_comum
 )
 
 echo.
 echo [V] Voltar
-set "esc_mundo="
-set /p "esc_mundo=Selecione o numero do mundo: "
+set /p "esc=Selecione o numero: "
+if /i "%esc%"=="V" goto menu_categorias_comum
+if not defined item[%esc%] goto listar_mundos
 
-if /i "%esc_mundo%"=="V" goto menu_categorias
+set "mundo_nome=!item[%esc%]!"
 
-:: Verifica se o número digitado corresponde a um mundo da lista
-if not defined mundo[%esc_mundo%] (
-    echo Opcao Invalida!
-    timeout /t 2 >nul
-    goto selecao_mundo
-)
+if "%modo_fluxo%"=="BACKUP" goto executar_backup
+goto listar_datas_restore
 
-set "nome_mundo=!mundo[%esc_mundo%]!"
-
-:: ======================================================
-:: CRIAÇÃO DO CARIMBO DE DATA E HORA
-:: ======================================================
+:executar_backup
 set "d=%date:~6,4%-%date:~3,2%-%date:~0,2%"
-:: Pega o ano, mês e dia da variável do sistema %date%.
-
 set "t=%time:~0,2%-%time:~3,2%"
-:: Pega hora e minutos da variável %time%.
-
 set "t=%t: =0%"
-:: Se a hora for menor que 10 (ex: 9:00), o Windows coloca um espaço. Isso troca o espaço por 0.
-
-set "dh=%d%_%t%"
-
-:: Define o caminho final onde os arquivos serão colados
-set "caminho_final=%destino_raiz%\%subpasta%\%nome_mundo%\%dh%"
+set "final=%destino_raiz%\%sub%\%mundo_nome%\%d%_%t%"
 
 echo.
-echo Criando backup de: "%nome_mundo%"...
-
-:: Cria a pasta de destino (incluindo as pastas pai, se necessário)
-if not exist "%caminho_final%" mkdir "%caminho_final%"
-
-:: O comando XCOPY faz a cópia:
-:: /E - Copia pastas e subpastas (inclusive vazias).
-:: /I - Se o destino não existir, assume que é uma pasta.
-:: /Y - Sobrescreve sem perguntar (embora a pasta seja nova).
-:: /Q - Modo silencioso (não lista cada arquivo copiado).
-xcopy "%caminho_busca%\%nome_mundo%" "%caminho_final%\" /E /I /Y /Q
+echo Criando backup em: "%final%"
+mkdir "%final%" 2>nul
+xcopy "%saves_raiz%\%sub%\%mundo_nome%" "%final%\" /E /I /Y /Q
 
 echo.
+echo BACKUP CONCLUIDO!
+pause
+goto menu_principal
+
+:listar_datas_restore
+cls
 echo ======================================================
-echo    BACKUP CONCLUIDO COM SUCESSO!
+echo    RESTORE - SELECIONE A DATA DO BACKUP
 echo ======================================================
+echo.
+set "caminho_datas=%destino_raiz%\%sub%\%mundo_nome%"
+for /L %%i in (1,1,100) do set "data_bkp[%%i]="
+set count=0
+for /f "delims=" %%a in ('dir /b /ad "%caminho_datas%" 2^>nul') do (
+    set /a count+=1
+    set "data_bkp[!count!]=%%a"
+    echo [!count!] - %%a
+)
+echo [V] Voltar
+echo.
+set /p "esc_d=Qual backup deseja restaurar? "
+if /i "%esc_d%"=="V" goto listar_mundos
+if not defined data_bkp[%esc_d%] goto listar_datas_restore
+
+set "data_selecionada=!data_bkp[%esc_d%]!"
+
+echo.
+echo [PERIGO] Isso vai sobrescrever seu save atual no jogo!
+set /p "confirma=Confirmar restauracao de %mundo_nome%? (S/N): "
+if /i not "%confirma%"=="S" goto menu_principal
+
+echo Restaurando arquivos...
+:: Remove a pasta atual para garantir instalacao limpa
+rd /s /q "%saves_raiz%\%sub%\%mundo_nome%" 2>nul
+:: Copia os arquivos do backup para a pasta original do jogo
+xcopy "%caminho_datas%\%data_selecionada%" "%saves_raiz%\%sub%\%mundo_nome%\" /E /I /Y /Q
+
+echo.
+echo RESTAURACAO CONCLUIDA!
 pause
 goto menu_principal
