@@ -31,12 +31,27 @@ if "%op_main%"=="5" exit
 goto menu_principal
 
 :abrir_pasta_jogo
-start "" "%zomboid_raiz%"
+:: Verifica se a pasta raiz do Zomboid existe
+if exist "%zomboid_raiz%" (
+    start "" "%zomboid_raiz%"
+) else (
+    echo.
+    echo [ERRO] A pasta de saves do jogo nao foi encontrada em:
+    echo "%zomboid_raiz%"
+    timeout /t 3 >nul
+)
 goto menu_principal
 
 :abrir_pasta_backup
-if not exist "%destino_raiz%" mkdir "%destino_raiz%"
-start "" "%destino_raiz%"
+:: Verifica se a pasta de backup existe
+if exist "%destino_raiz%" (
+    start "" "%destino_raiz%"
+) else (
+    echo.
+    echo [AVISO] A pasta de backups ainda nao existe. 
+    echo Ela sera criada automaticamente ao realizar o primeiro backup.
+    timeout /t 3 >nul
+)
 goto menu_principal
 
 :: --- SEÇÃO DE CATEGORIAS (COMUM) ---
@@ -54,10 +69,7 @@ echo ======================================================
 echo          MODO: %modo_fluxo% - CATEGORIA
 echo ======================================================
 echo.
-echo [1] Sandbox
-echo [2] Multiplayer
-echo [3] Survivor
-echo [4] Apocalypse
+echo [1] Sandbox  [2] Multiplayer  [3] Survivor  [4] Apocalypse
 echo [V] Voltar
 echo.
 set "cat="
@@ -119,7 +131,8 @@ goto listar_datas_restore
 set "d=%date:~6,4%-%date:~3,2%-%date:~0,2%"
 set "t=%time:~0,2%-%time:~3,2%"
 set "t=%t: =0%"
-set "final=%destino_raiz%\%sub%\%mundo_nome%\%d%_%t%"
+set "dh=%d%_%t%"
+set "final=%destino_raiz%\%sub%\%mundo_nome%\%dh%"
 
 echo.
 echo Criando backup em: "%final%"
@@ -159,9 +172,7 @@ set /p "confirma=Confirmar restauracao de %mundo_nome%? (S/N): "
 if /i not "%confirma%"=="S" goto menu_principal
 
 echo Restaurando arquivos...
-:: Remove a pasta atual para garantir instalacao limpa
 rd /s /q "%saves_raiz%\%sub%\%mundo_nome%" 2>nul
-:: Copia os arquivos do backup para a pasta original do jogo
 xcopy "%caminho_datas%\%data_selecionada%" "%saves_raiz%\%sub%\%mundo_nome%\" /E /I /Y /Q
 
 echo.
