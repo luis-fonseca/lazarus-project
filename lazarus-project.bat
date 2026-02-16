@@ -38,7 +38,7 @@ if exist "%zomboid_raiz%" (
     echo.
     echo [ERRO] A pasta de saves do jogo nao foi encontrada em:
     echo "%zomboid_raiz%"
-    timeout /t 3 >nul
+    timeout /t 5 >nul
 )
 goto menu_principal
 
@@ -50,7 +50,7 @@ if exist "%destino_raiz%" (
     echo.
     echo [AVISO] A pasta de backups ainda nao existe. 
     echo Ela sera criada automaticamente ao realizar o primeiro backup.
-    timeout /t 3 >nul
+    timeout /t 5 >nul
 )
 goto menu_principal
 
@@ -69,7 +69,10 @@ echo ======================================================
 echo          MODO: %modo_fluxo% - CATEGORIA
 echo ======================================================
 echo.
-echo [1] Sandbox  [2] Multiplayer  [3] Survivor  [4] Apocalypse
+echo [1] Sandbox      
+echo [2] Multiplayer
+echo [3] Survivor
+echo [4] Apocalypse
 echo [V] Voltar
 echo.
 set "cat="
